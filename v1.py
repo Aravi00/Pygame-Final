@@ -5,6 +5,12 @@ windowwidth = 500
 windowheight = 500
 window = py.display.set_mode((windowwidth,windowheight))
 clock = py.time.Clock()
+
+nightbg = py.image.load("nightbg.jpg")
+nightbg2 = py.image.load("nightbg 2.jpg")
+daybg = py.image.load("day bg.png")
+
+nightsurface = py.transform.scale_by(nightbg,10/11)
 #loop
 rext = 50
 reyt =50
@@ -34,6 +40,8 @@ while True:
         apressed = False
 
     window.fill("white")
+    window.blit(nightsurface,(0,0))
+    
     yspeed+=1
     reyt+=yspeed
     if reyt >= 400:
