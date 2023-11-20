@@ -7,12 +7,15 @@ window = py.display.set_mode((windowwidth,windowheight))
 clock = py.time.Clock()
 
 nightbg = py.image.load("nightbg.jpg")
-nightbg2 = py.image.load("nightbg 2.jpg")
+nightbg2 = py.image.load("nightbg 3.jpg")
 daybg = py.image.load("day bg.png")
-
-nightsurface = py.transform.scale_by(nightbg,10/11)
+foreground = py.image.load("foreground.png")
+nightsurface = py.transform.scale_by(nightbg2,windowheight/419)
+fsurface = py.transform.scale_by(foreground,2)
+nightx = 0
+nightx2 = 1000*(windowheight/419)
 #loop
-rext = 50
+rext = 250
 reyt =50
 yspeed = 2
 while True:
@@ -40,22 +43,35 @@ while True:
         apressed = False
 
     window.fill("white")
-    window.blit(nightsurface,(0,0))
-    
-    yspeed+=1
+#     if nightx + 1000*(windowheight/419) < 0 or nightx >0:
+#         nightx = 1000*(windowheight/419)
+#     if nightx2 < -1000*(windowheight/419) or nightx2 > 1000*(windowheight/419):
+#         nightx2 = 1000*(windowheight/419)
+    if nightx > -1000*(windowheight/419):
+        print("movemnet check")
+    else:
+        x = 1000*(windowheight/419)
+    if nightx2> -1000*(windowheight/419):
+        print("movemnet check")
+    else:
+        nightx2 = 1000*(windowheight/419)
+
+    yspeed+=0.25
     reyt+=yspeed
     if reyt >= 400:
         yspeed = 0
         reyt = 400
     if spacepressed and reyt >= 400:
         print("jump")
-        yspeed = -20
+        yspeed = -7.5
     if dpressed:
         print("right")
-        rext +=10
+        nightx -=5
+        nightx2 -=5
     if apressed:
         print("left")
-        rext -=10
+        nightx +=5
+        nightx2 +=5
     if rext > windowwidth:
         rext = 0
     elif rext < 0:
@@ -63,7 +79,10 @@ while True:
     
     rect = [rext,reyt,30,40] #x,y,w,h
     #draw here
+    window.blit(nightsurface,(nightx,0))
+    window.blit(nightsurface,(nightx2,0))
+    window.blit(fsurface,(nightx*2-40,170))
     py.draw.rect(window,(0,0,0),rect)
     py.display.flip()
-    clock.tick(60)                                   
+    clock.tick(60)
 py.quit()
