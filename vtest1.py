@@ -1,4 +1,5 @@
 import pygame as py
+import random
 #setup
 py.init()
 windowwidth = 500
@@ -20,6 +21,9 @@ nightx3 = -size
 rext = 250
 reyt =50
 yspeed = 2
+touching = False
+random = random.randint(100,500)
+blockpos = [0,350,random,500-350]
 while True:
     ev = py.event.poll()
     if ev.type == py.QUIT:
@@ -31,36 +35,27 @@ while True:
         print(x,y)
     else:
         pressed = False
-    if (key[py.K_SPACE] or key[py.K_w])and reyt >= 400:
+    if (key[py.K_SPACE] or key[py.K_w]) and touching == True:
         print("jump")
         yspeed = -7.5
     if key[py.K_d]:
         print("right")
-        nightx -=5
-        nightx2 -=5
-        nightx3 -=5
+        rext+=5
     if key[py.K_a]:
         print("left")
-        nightx +=5
-        nightx2 +=5
-        nightx3 +=5
+        rext -= 5
         
     window.fill("white")
-    if nightx <= -size:
-        nightx = size
-    if nightx2<= -size:
-        nightx2 = size
-    if nightx >= size:
-        nightx = -size
-    if nightx3 >= size:
-        nightx3 = -size
         
     yspeed+=0.25
     reyt+=yspeed
-    if reyt >= 400:
+    if reyt+40 > blockpos[1] and rext < blockpos[0]+blockpos[2]:
         yspeed = 0
-        reyt = 400
-
+        reyt = blockpos[1]-40#-blockpos[3]
+        touching = True
+    else:
+        touching = False
+    
     if rext > windowwidth:
         rext = 0
     elif rext < 0:
@@ -68,11 +63,8 @@ while True:
     
     rect = [rext,reyt,30,40] #x,y,w,h
     #draw here
-    window.blit(nightsurface,(nightx,0))
-    window.blit(nightsurface,(nightx2,0))
-    window.blit(nightsurface,(nightx3,0))
-    window.blit(fsurface,(nightx*2-40,170))
     py.draw.rect(window,(0,0,0),rect)
+    py.draw.rect(window,(255,0,0),blockpos)
     py.display.flip()
     clock.tick(60)
 py.quit()
