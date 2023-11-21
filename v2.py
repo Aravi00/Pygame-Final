@@ -14,7 +14,7 @@ daybg = py.image.load("day bg.png")
 foreground = py.image.load("foreground.png")
 nightsurface = py.transform.scale_by(nightbg2,1)
 fsurface = py.transform.scale_by(foreground,2)
-size = 1191
+size = 1191  
 nightx = 0
 nightx2 = size
 #loop
