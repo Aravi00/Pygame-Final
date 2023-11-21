@@ -16,7 +16,6 @@ fsurface = py.transform.scale_by(foreground,2)
 size = 1191
 nightx = 0
 nightx2 = size
-nightx3 = -size
 #loop
 rext = 250
 reyt =50
@@ -41,27 +40,16 @@ while True:
         yspeed = -7.5
     if key[py.K_d]:
         print("right")
-        nightx -=5
-        nightx2 -=5
-        nightx3 -=5
+        nightx -=2
+        nightx2 -=2
         blockpos[0] -=15
         blockpos2[0] -=15
-    if key[py.K_a]:
-        print("left")
-        nightx +=5
-        nightx2 +=5
-        nightx3 +=5
-        blockpos[0] +=15
-        blockpos2[0] +=15
     window.fill("white")
-    if nightx <= -size:
+    if nightx < -size:
         nightx = size
-    if nightx2<= -size:
+    if nightx2 < -size:
         nightx2 = size
-    if nightx >= size:
-        nightx = -size
-    if nightx3 >= size:
-        nightx3 = -size
+
 
     yspeed+=0.25
     reyt+=yspeed
@@ -72,16 +60,10 @@ while True:
     else:
         touching = False
 
-    if rext > windowwidth:
-        rext = 0
-    elif rext < 0:
-        rext = windowwidth
-    
     rect = [rext,reyt,30,40] #x,y,w,h
     #draw here
     window.blit(nightsurface,(nightx,0))
     window.blit(nightsurface,(nightx2,0))
-    window.blit(nightsurface,(nightx3,0))
     window.blit(fsurface,(nightx*2-40,170))
     py.draw.rect(window,(255,0,0),blockpos)
     py.draw.rect(window,(0,0,255),blockpos2)
