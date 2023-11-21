@@ -5,6 +5,7 @@ py.init()
 windowwidth = 500
 windowheight = 500
 window = py.display.set_mode((windowwidth,windowheight))
+py.display.set_caption("Arav's Spiderman Game")
 clock = py.time.Clock()
 
 nightbg = py.image.load("nightbg.jpg")
@@ -21,9 +22,9 @@ rext = 250
 reyt =50
 yspeed = 2
 touching = False
-randomw = random.randint(100,500)
-blockpos = [200,350,randomw,500-350]
-blockpos2 = [blockpos[0]+blockpos[2]+400,350,randomw,500-350]
+randomw = random.randint(250,500)
+blockpos = [0,350,randomw,500-350]
+blockpos2 = [blockpos[0]+blockpos[2]+300,350,randomw,500-350]#x distance has to be >=300
 while True:
     ev = py.event.poll()
     if ev.type == py.QUIT:
