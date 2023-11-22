@@ -65,7 +65,7 @@ while True:
     #draw here
     window.blit(nightsurface,(nightx,0))
     window.blit(nightsurface,(nightx2,0))
-    window.blit(fsurface,(nightx*2-40,170))
+    window.blit(fsurface,(nightx*2-40,175))
     py.draw.rect(window,(255,0,0),blockpos)
     py.draw.rect(window,(0,0,255),blockpos2)
 
