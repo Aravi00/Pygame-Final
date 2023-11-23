@@ -18,55 +18,52 @@ size = 1191
 nightx = 0
 nightx2 = size
 #loop
-rext = 250
-reyt =50
+
 yspeed = 2
-rect = py.Rect(250,50,30,40)
-touching = False
-blockpos = py.Rect(0,350,random.randint(250,500),500-350)#left,top,width,height
-blockpos2 = py.Rect(blockpos[0]+blockpos[2]+random.randint(300,500),350,random.randint(250,500),500-350)#x distance has to be >=300
-blockpos3 = py.Rect(blockpos2[0]+blockpos2[2]+random.randint(300,500),350,random.randint(250,500),500-350)#x distance has to be >=300
-blocks = [blockpos,blockpos2,blockpos3]
+rect = py.Rect(250,150,30,40)
+blockpos = py.Rect(0,random.randint(100,400),random.randint(250,500),200)#left,top,width,height
+blockpos.height = windowheight-blockpos.top
+blockpos2 = py.Rect(blockpos.right+random.randint(300,500),random.randint(100,400),random.randint(250,500),200)#x distance has to be >=300
+blockpos2.height = windowheight-blockpos2.top
+blocks = [blockpos,blockpos2]
 while True:
     ev = py.event.poll()
     if ev.type == py.QUIT:
         break
     key = py.key.get_pressed()
-    window.fill("white")
     
-    if ev.type == py.MOUSEBUTTONUP:
-        pressed = True
-        x,y = py.mouse.get_pos()
-        print(x,y)
-    else:
-        pressed = False
-    if (key[py.K_SPACE] or key[py.K_w]) and touching == True:
-        print("jump")
-        yspeed = -7.5
+    window.fill("white")
+
     if key[py.K_d]:
         print("right")
         nightx -=2
         nightx2 -=2
         for i in range(len(blocks)):
             blocks[i].left -=15
+            
+    yspeed+=0.25
+    rect.top+=yspeed
+    
+    for i in range(len(blocks)):
+        if rect.bottom+1 > blocks[i].top and rect.left > blocks[i].left and rect.left < blocks[i].right:#if py.Rect.colliderect(rect,blocks[i]):
+            yspeed = 0
+            rect.top = blocks[i].top-40           
+            if (key[py.K_SPACE] or key[py.K_w]):
+                print("jump")
+                yspeed = -7.5
+            break
+        #elif you touch the side of the building, what happens?
+    if blocks[0].right < 0:
+        blocks.append(py.Rect(blocks[-1].right+random.randint(300,500),random.randint(100,400),random.randint(250,500),200))
+        blocks[-1].height = windowheight-blocks[-1].top
+        blocks.pop(0)
     if nightx < -size:
         nightx = size
     if nightx2 < -size:
         nightx2 = size
     
-    yspeed+=0.25
-    rect.top+=yspeed
-    for i in range(len(blocks)):
-        #if (reyt+40 > blocks[i].top and rext < blocks[i].left+blocks[i].width and rext > blocks[i].left):
-        #if py.Rect.colliderect(rect,blocks[i]):
-        if rect.top+40 >
-            yspeed = 0
-            reyt = blocks[i].top-40
-            touching = True
-        else:
-            touching = False
      #x,y,w,h
-    #draw here
+    #draw here 
     window.blit(nightsurface,(nightx,0))
     window.blit(nightsurface,(nightx2,0))
     window.blit(fsurface,(nightx*2-40,175))
