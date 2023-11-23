@@ -21,15 +21,19 @@ nightx2 = size
 rext = 250
 reyt =50
 yspeed = 2
+rect = py.Rect(250,50,30,40)
 touching = False
-randomw = random.randint(250,500)
-blockpos = [0,350,randomw,500-350]
-blockpos2 = [blockpos[0]+blockpos[2]+300,350,randomw,500-350]#x distance has to be >=300
+blockpos = py.Rect(0,350,random.randint(250,500),500-350)#left,top,width,height
+blockpos2 = py.Rect(blockpos[0]+blockpos[2]+random.randint(300,500),350,random.randint(250,500),500-350)#x distance has to be >=300
+blockpos3 = py.Rect(blockpos2[0]+blockpos2[2]+random.randint(300,500),350,random.randint(250,500),500-350)#x distance has to be >=300
+blocks = [blockpos,blockpos2,blockpos3]
 while True:
     ev = py.event.poll()
     if ev.type == py.QUIT:
         break
     key = py.key.get_pressed()
+    window.fill("white")
+    
     if ev.type == py.MOUSEBUTTONUP:
         pressed = True
         x,y = py.mouse.get_pos()
@@ -43,32 +47,31 @@ while True:
         print("right")
         nightx -=2
         nightx2 -=2
-        blockpos[0] -=15
-        blockpos2[0] -=15
-    window.fill("white")
+        for i in range(len(blocks)):
+            blocks[i].left -=15
     if nightx < -size:
         nightx = size
     if nightx2 < -size:
         nightx2 = size
-
-
+    
     yspeed+=0.25
-    reyt+=yspeed
-    if (reyt+40 > blockpos[1] and rext < blockpos[0]+blockpos[2] and rext > blockpos[0]) or (reyt+40 > blockpos2[1] and rext < blockpos2[0]+blockpos2[2] and rext > blockpos2[0]):
-        yspeed = 0
-        reyt = blockpos2[1]-40#-blockpos[3]
-        touching = True
-    else:
-        touching = False
-
-    rect = [rext,reyt,30,40] #x,y,w,h
+    rect.top+=yspeed
+    for i in range(len(blocks)):
+        #if (reyt+40 > blocks[i].top and rext < blocks[i].left+blocks[i].width and rext > blocks[i].left):
+        #if py.Rect.colliderect(rect,blocks[i]):
+        if rect.top+40 >
+            yspeed = 0
+            reyt = blocks[i].top-40
+            touching = True
+        else:
+            touching = False
+     #x,y,w,h
     #draw here
     window.blit(nightsurface,(nightx,0))
     window.blit(nightsurface,(nightx2,0))
     window.blit(fsurface,(nightx*2-40,175))
-    py.draw.rect(window,(255,0,0),blockpos)
-    py.draw.rect(window,(0,0,255),blockpos2)
-
+    for i in range(len(blocks)):
+        py.draw.rect(window,(255,0,0),blocks[i])
     py.draw.rect(window,(0,0,0),rect)
     py.display.flip()
     clock.tick(60)
