@@ -11,7 +11,7 @@ clock = py.time.Clock()
 miles = py.image.load("miles.png")
 scale = 1.2
 milesm = py.transform.scale_by(miles,scale)
-milesloc = py.Rect(0*scale,0*scale,40*scale,40*scale)
+milesloc = py.Rect(0*scale,0*scale,42*scale,40*scale)
 milesnum = 0
 milesframerate = 30
 framecount = 0
@@ -21,10 +21,10 @@ while True:
     if ev.type == py.QUIT:
         break
     key = py.key.get_pressed()
-    if framecount % milesframerate ==0 :
-        if(milesnum<6-1):
+    if framecount % milesframerate ==0:
+        if(milesnum<6):
             milesnum+=1
-            milesloc.x += milesloc.width+50
+            milesloc.x += milesloc.width
         else:
             milesnum=0
             milesloc.x =0
