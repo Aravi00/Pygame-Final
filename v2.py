@@ -12,6 +12,8 @@ nightbg = py.image.load("nightbg.jpg")
 nightbg2 = py.image.load("nightbg 3.jpg")
 daybg = py.image.load("day bg.png")
 foreground = py.image.load("foreground.png")
+miles = py.image.load("miles.png")
+
 nightsurface = py.transform.scale_by(nightbg2,1)
 fsurface = py.transform.scale_by(foreground,2)
 size = 1191  
@@ -49,11 +51,11 @@ while True:
             if (key[py.K_SPACE]):
                 yspeed = -7.5
             break
-        elif rect.bottom+1 > blocks[i].top and rect.right > blocks[i].right:
+        elif rect.bottom+1 > blocks[i].top and rect.right > blocks[i].right:#elif you touch the side of the building, what happens?
             print("edge")
             if key[py.K_w]:
                 rect.top+=10
-        #elif you touch the side of the building, what happens?
+        
         
     if blocks[0].right < 0:
         blocks.append(py.Rect(blocks[-1].right+random.randint(50,400),random.randint(250,400),random.randint(250,500),200))
@@ -68,6 +70,7 @@ while True:
      #x,y,w,h
     #draw here 
     window.blit(nightsurface,(nightx,0))
+    window.blit(miles,(0,0))
     window.blit(nightsurface,(nightx2,0))
     #window.blit(fsurface,(nightx*2-40,175))
     for i in range(len(blocks)):
