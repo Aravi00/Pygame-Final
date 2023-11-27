@@ -13,25 +13,25 @@ scale = 1.2
 milesm = py.transform.scale_by(miles,scale)
 milesloc = py.Rect(0*scale,0*scale,40*scale,40*scale)
 milesnum = 0
-milesframerate = 3
-
+milesframerate = 30
+framecount = 0
 #loop
 while True:
     ev = py.event.poll()
     if ev.type == py.QUIT:
         break
     key = py.key.get_pressed()
-    
-    if(milesnum<6-1):
-        milesnum+=1
-        milesloc.x += milesloc.width+50
-    else:
-        milesnum=0
-        milesloc.x =0
-    
+    if framecount % milesframerate ==0 :
+        if(milesnum<6-1):
+            milesnum+=1
+            milesloc.x += milesloc.width+50
+        else:
+            milesnum=0
+            milesloc.x =0
+    framecount+=1
     window.fill("white")
     #draw here 
     window.blit(milesm,(0,0),milesloc)
     py.display.flip()
-    clock.tick(1)
+    clock.tick(60)
 py.quit()
