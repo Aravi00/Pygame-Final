@@ -1,5 +1,4 @@
 import pygame as py
-import random
 #setup
 py.init()
 windowwidth = 500
@@ -13,7 +12,7 @@ scale = 1
 milesm = py.transform.scale_by(miles,scale)
 milesloc = py.Rect(0*scale,0*scale,40*scale,60*scale)
 milesnum = 0
-milesframerate = 30
+milesframerate = 10
 framecount = 0
 #loop
 while True:
@@ -22,7 +21,7 @@ while True:
         break
     key = py.key.get_pressed()
     if framecount % milesframerate ==0:
-        if(milesnum<5):
+        if(milesnum<4):
             milesnum+=1
             milesloc.x += 50
         else:
