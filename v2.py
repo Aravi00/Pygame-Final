@@ -1,7 +1,6 @@
 import pygame as py
 import random
 #setup
-# for some reason it stays in jump position
 py.init()
 windowwidth = 500
 windowheight = 500
@@ -38,6 +37,8 @@ milesjloc = py.Rect(0,0,41,44)
 milesloc = py.Rect(0,0,40,44)
 milesnum = 0
 framecount = 0
+air = False
+edge = False
 def animate(img,framewidth,numframes,framerate):
     global framecount,milesnum
     #milesloc.top = ypos
@@ -58,31 +59,37 @@ while True:
     
     window.fill("white")
 
-    if key[py.K_d]:
+    if key[py.K_d] == True and edge == False:
         nightx -=2
         nightx2 -=2
         for i in range(len(blocks)):
-            blocks[i].left -=15
-        animate(milesloc,50,6,10)
-    yspeed+=0.25
+            blocks[i].left -=10
+        animate(milesloc,50,6,8)
+    yspeed+=0.2
     rect.top+=yspeed
     for i in range(len(blocks)):
-        if rect.bottom+1 > blocks[i].top and rect.left > blocks[i].left and rect.left < blocks[i].right:#if py.Rect.colliderect(rect,blocks[i]):
+        if rect.bottom+1 > blocks[i].top and rect.bottom+1 < blocks[i].top + 20 and rect.left > blocks[i].left and rect.left < blocks[i].right:#if py.Rect.colliderect(rect,blocks[i]):
             yspeed = 0
+            air = False
+            edge = False
+            print("top")
             rect.top = blocks[i].top-rect.height           
             if (key[py.K_SPACE]):
                 yspeed = -7.5
             break
-#         elif rect.bottom+1 > blocks[i].top and rect.right > blocks[i].right:#elif you touch the side of the building, what happens?
-#             print("edge")
-#             if key[py.K_w]:
-#                 rect.top+=10
+        elif rect.right > blocks[i].left and rect.right < blocks[i].left + 10 and rect.top > blocks[i].top:#elif you touch the side of the building, what happens?
+            # so its in the air and the edge at the same time when on the corner
+            print("edge")
+            yspeed = 0
+            air = False
+            edge = True
+            if key[py.K_w]:
+                rect.top-=5
+            break
         else:
-            animate(milesjloc,44,2,30)
-            #window.blit(milesj,(rect.x,rect.y))
-            #py.draw.rect(window,(0,255,0),rect)
-            #print("air")
-            
+            air = True
+            print("air")
+            #edge = False
     
     if blocks[0].right < 0:
         blocks.append(py.Rect(blocks[-1].right+random.randint(50,400),random.randint(250,400),random.randint(250,500),200))
@@ -106,9 +113,10 @@ while True:
     for i in range(len(blocks)):
         py.draw.rect(window,(255,0,0),blocks[i])
     #py.draw.rect(window,(0,0,0),rect)
-    window.blit(milesm,(rect.x,rect.y),milesloc)
-    window.blit(milesj,(rect.x,rect.y),milesjloc)
+    if air:
+        window.blit(milesj,(rect.x,rect.y),milesjloc)
+    else:
+        window.blit(milesm,(rect.x,rect.y),milesloc)
     py.display.flip()
     clock.tick(60)
 py.quit()
-
