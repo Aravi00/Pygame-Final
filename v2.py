@@ -60,15 +60,15 @@ while True:
     window.fill("white")
 
     if key[py.K_d] == True and edge == False:
-        nightx -=2
-        nightx2 -=2
+        nightx -=1
+        nightx2 -=1
         for i in range(len(blocks)):
             blocks[i].left -=10
         animate(milesloc,50,6,8)
     yspeed+=0.2
     rect.top+=yspeed
     for i in range(len(blocks)):
-        if rect.bottom+1 > blocks[i].top and rect.bottom+1 < blocks[i].top + 20 and rect.left > blocks[i].left and rect.left < blocks[i].right:#if py.Rect.colliderect(rect,blocks[i]):
+        if rect.bottom+1 > blocks[i].top and rect.bottom+1 < blocks[i].top +50 and rect.left > blocks[i].left and rect.left < blocks[i].right:#if py.Rect.colliderect(rect,blocks[i]):
             yspeed = 0
             air = False
             edge = False
@@ -77,19 +77,21 @@ while True:
             if (key[py.K_SPACE]):
                 yspeed = -7.5
             break
-        elif rect.right > blocks[i].left and rect.right < blocks[i].left + 10 and rect.top > blocks[i].top:#elif you touch the side of the building, what happens?
+        elif rect.right > blocks[i].left and rect.right < blocks[i].left + 50 and rect.top > blocks[i].top:#elif you touch the side of the building, what happens?
             # so its in the air and the edge at the same time when on the corner
             print("edge")
             yspeed = 0
             air = False
             edge = True
             if key[py.K_w]:
-                rect.top-=5
-            break
-        else:
+                #rect.top-=5
+                yspeed = -7.5
+            
+        elif rect.bottom< blocks[i].top:
             air = True
             print("air")
-            #edge = False
+            edge = False
+            break
     
     if blocks[0].right < 0:
         blocks.append(py.Rect(blocks[-1].right+random.randint(50,400),random.randint(250,400),random.randint(250,500),200))
@@ -110,6 +112,7 @@ while True:
     window.blit(nightsurface,(nightx,0))
     window.blit(nightsurface,(nightx2,0))
     #window.blit(fsurface,(nightx*2-40,175))
+    #window.blit(fsurface,(nightx*2-40+612*2-40,175))
     for i in range(len(blocks)):
         py.draw.rect(window,(255,0,0),blocks[i])
     #py.draw.rect(window,(0,0,0),rect)
