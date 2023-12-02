@@ -11,21 +11,34 @@ window = py.display.set_mode((windowwidth,windowheight))
 py.display.set_caption("Arav's Spiderman Game")
 clock = py.time.Clock()
 
-nightsurface = py.image.load("nightbg 3.jpg")
-jump = py.mixer.Sound("jump2.wav")
-jump.set_volume(1.0)
-climb = py.mixer.music.load("climb.mp3")
+jump = py.mixer.Sound("sound/jump2.wav")
+jump.set_volume(5.0)
+click = py.mixer.Sound("sound/click.wav")
+click.set_volume(5.0)
+#climb = py.mixer.music.load("climb.mp3")
+
+music = py.mixer.music.load("sound/01-Annihilate (Instrumental).mp3")
+py.mixer.music.play(-1)
+
 #daybg = py.image.load("day bg.png")
 #foreground = py.image.load("foreground.png")
-milesm = py.image.load("milesrun.png")
-milesj = py.image.load("miles4.png")
-milesclimb = py.image.load("miles_morales.png")
-font1 = py.font.SysFont("times new roman",50)
-font2 = py.font.SysFont("times new roman",20)
+nightsurface = py.image.load("img/nightbg 3.jpg")
+milesm = py.image.load("img/milesrun.png")
+milesj = py.image.load("img/miles4.png")
+milesclimb = py.image.load("img/miles_morales.png")
+startBack = py.image.load("img/cover.jpg")
 
+font1 = py.font.SysFont("Bernard MT",60)
+font2 = py.font.SysFont("Bernard MT",25)
+font4 = py.font.SysFont("Bernard MT",40)
+
+font3 = py.font.Font("spiderfont.ttf",80)
+
+gray = py.Color(15, 42, 60)
+white = py.Color(242, 242, 242)
 #fsurface = py.transform.scale_by(foreground,2)
 size = 1191
-buildings = [py.image.load("building1.png"),py.image.load("building2.png"),py.image.load("building3.png"),py.image.load("building4.png")]
+buildings = [py.image.load("img/building1.png"),py.image.load("img/building2.png"),py.image.load("img/building3.png"),py.image.load("img/building4.png")]
 mybuild = [random.choice(buildings),random.choice(buildings)]
 
 gamestate = 0
@@ -47,6 +60,13 @@ def animate(img,framewidth,numframes,framerate):
 def build(rectangle,build):
     buildw,buildh = py.Surface.get_size(build)
     return py.transform.smoothscale(build,(buildw*(rectangle.width/buildw),buildh*(rectangle.height/buildh)))
+def button(x,y,w,h,text):
+    global mousepos
+    button = py.draw.rect(window,gray,(x,y,w,h),0,10)
+    window.blit(font1.render(text,1,white),(button.x+5,button.y+5))
+    if pressed and button.collidepoint(mousepos):
+            click.play()
+            return True
 def reset():
     global nightx,nightx2,size,yspeed,rect,milesloc,milesnum,framecount,air,edge,blockpos,blockpos2,blocks,mytime,distance,time,timeover
     nightx = 0
@@ -75,33 +95,31 @@ while True:
     if ev.type == py.QUIT:
         break
     key = py.key.get_pressed()
+    mousepos = py.mouse.get_pos()
     if ev.type == py.MOUSEBUTTONDOWN:
-        mousepos = py.mouse.get_pos()
+        #mousepos = py.mouse.get_pos()
         pressed = True
     else:
         pressed = False
     window.fill("white")
     if gamestate == 0:#start
         print("startscreen")
-        text1 = font1.render("Miles Morales Jumper",1,(0,0,255))
-        window.blit(text1, (25,25))
-        start = py.draw.rect(window,(100,100,100),((windowwidth-110)/2,170, 110,50),0,10)
-        text = font1.render("Start",1,(0,0,255))
-        window.blit(text,(start.x+5,start.y-5))
-        settings = py.draw.rect(window,(100,100,100),((windowwidth-165)/2,start.bottom +30, 165,50),0,10)
-        text = font1.render("Settings",1,(0,0,255))
-        window.blit(text,(settings.x,settings.y-5))
-        howtoplay = py.draw.rect(window,(100,100,100),((windowwidth-270)/2,settings.bottom +30, 270,50),0,10)
-        text = font1.render("How To Play",1,(0,0,255))
-        window.blit(text,(howtoplay.x,howtoplay.y-5))
-        if pressed:
-            if start.collidepoint(mousepos):
-                reset()
-                gamestate = 1
-            elif settings.collidepoint(mousepos):
-                gamestate = 4
-            elif howtoplay.collidepoint(mousepos):
-                gamestate = 3
+        window.blit(startBack,(0,0))
+        window.blit(font3.render("SPIDER JUMPER",1,white), (25,25))
+        
+#         start = py.draw.rect(window,gray,((windowwidth-110)/2,170, 110,50),0,10)
+#         window.blit(font1.render("Start",1,white),(start.x+5,start.y+5))
+        start = button((windowwidth-110)/2,170, 110,50,"Start")
+        settings = button((windowwidth-180)/2,240, 180,50,"Settings")
+        howtoplay = button((windowwidth-255)/2,300, 255,50,"How To Play")
+        
+        if start == True:
+            reset()
+            gamestate = 1
+        elif settings == True:
+            gamestate = 4
+        elif howtoplay == True:
+            gamestate = 3
     elif gamestate == 1: #play
         if key[py.K_d] == True and edge == False:
             nightx -=1
@@ -131,7 +149,7 @@ while True:
                 edge = True
                 if key[py.K_w]:
                     yspeed = -4.5
-                    py.mixer.music.play(0,0.5)
+                    #py.mixer.music.play(0,0.5)
             elif rect.bottom< blocks[i].top:
                 air = True
                 #print("air")
@@ -172,7 +190,7 @@ while True:
         for i in range(len(blocks)):
             block = build(blocks[i],mybuild[i])
             window.blit(block,blocks[i])
-            py.draw.rect(window,(100,100,100),(blocks[i].left,blocks[i].top+20,10,blocks[i].height))
+            py.draw.rect(window,gray,(blocks[i].left,blocks[i].top+20,10,blocks[i].height))
             py.draw.rect(window,(0,0,0),(blocks[i].left,blocks[i].top,blocks[i].width,20))
         if air:
             window.blit(milesj,(rect.x,rect.y))
@@ -180,75 +198,66 @@ while True:
             window.blit(milesclimb,(rect.x,rect.y))
         else:
             window.blit(milesm,(rect.x,rect.y),milesloc)
-        window.blit(font2.render("Time:",1,(0,0,255)),(10,10))
-        window.blit(font2.render("Distance:",1,(0,0,255)),(10,30))
-        window.blit(font2.render(str(timelimit-mytime),1,(0,0,255)),(100,10))
-        window.blit(font2.render(str(int(distance))+ " m",1,(0,0,255)),(100,30))
+        window.blit(font2.render("Time:",1,white),(10,10))
+        window.blit(font2.render("Distance:",1,white),(10,30))
+        window.blit(font2.render(str(timelimit-mytime),1,white),(100,10))
+        window.blit(font2.render(str(int(distance))+ " m",1,white),(100,30))
     elif gamestate == 2:#end screen
         print("endscreen")
-        text1 = font1.render("GAME OVER",1,(0,0,255))
-        window.blit(text1, (100,25))
+        window.blit(startBack,(0,0))
+        window.blit(font3.render("GAME OVER",1,white), (100,25))
         speed = distance/mytime
         if speed >= highscore:
             highscore = speed
-            window.blit(font2.render("New High Score!!",1,(0,0,255)),(100,180))
+            window.blit(font2.render("New High Score!!",1,white),(100,200))
         if timeover:
-            window.blit(font2.render("Time Over!",1,(0,0,255)),(100,100))
+            window.blit(font2.render("Time's Up!",1,white),(100,120))
         else:
-            window.blit(font2.render("You Died!",1,(0,0,255)),(100,100))
-        window.blit(font2.render("Distance:",1,(0,0,255)),(100,130))
-        window.blit(font2.render("Speed:",1,(0,0,255)),(300,130))
-        window.blit(font2.render("High Score:",1,(0,0,255)),(100,150))
-        window.blit(font2.render(str(int(distance)) + " m",1,(0,0,255)),(200,130))
-        window.blit(font2.render(str(int(speed)) + " m/s",1,(0,0,255)),(400,130))
-        window.blit(font2.render(str(int(highscore))+ " m/s",1,(0,0,255)),(200,150))
-        end = py.draw.rect(window,(100,100,100),((windowwidth-125)/2,220, 125,50),0,10)
-        window.blit(font1.render("Home",1,(0,0,255)),(end.x,end.y-5))
-        end2 = py.draw.rect(window,(100,100,100),((windowwidth-225)/2,300, 225,50),0,10)
-        window.blit(font1.render("Play Again",1,(0,0,255)),(end2.x,end2.y-5))
-        if pressed:
-            if end.collidepoint(mousepos):
-                gamestate = 0
-            elif end2.collidepoint(mousepos):
-                reset()
-                gamestate = 1
+            window.blit(font2.render("You Died!",1,white),(100,120))
+        window.blit(font2.render("Distance:",1,white),(100,150))
+        window.blit(font2.render("Speed:",1,white),(300,150))
+        window.blit(font2.render("High Score:",1,white),(100,170))
+        window.blit(font2.render(str(int(distance)) + " m",1,white),(200,150))
+        window.blit(font2.render(str(int(speed)) + " m/s",1,white),(400,150))
+        window.blit(font2.render(str(int(highscore))+ " m/s",1,white),(200,170))
+        
+        end = button((windowwidth-125)/2,240, 125,50,"Home")
+        end2 = button((windowwidth-225)/2,300, 225,50,"Play Again")
+        if end:
+            gamestate = 0
+        elif end2:
+            reset()
+            gamestate = 1
+            
     elif gamestate == 3:
         print("how to play")
+        window.fill("black")
         f = open("HowToPlay.txt", "r")
-            #print(f.read())
-        htptext = font2.render(f.read(),1,(0,0,255))
-        window.blit(htptext,(15,15))
-        #ptext.draw(f, (10, 10))
+        window.blit(font2.render(f.read(),1,white),(15,15))
         f.close()
-        end = py.draw.rect(window,(100,100,100),((windowwidth-105)/2,370, 105,50),0,10)
-        text = font1.render("Back",1,(0,0,255))
-        window.blit(text,(end.x,end.y-5))
-        if pressed:
-            if end.collidepoint(mousepos):
-                gamestate = 0
+        
+        back = button((windowwidth-110)/2,370, 110,50,"Back")
+        if back:
+            gamestate = 0
+
     elif gamestate == 4:
         print("Settings")
-        window.blit(font1.render("Settings",1,(0,0,255)),(50,20))
+        window.fill("black")
+        window.blit(font1.render("Settings",1,white),(50,20))
+        window.blit(font4.render("Time Limit:",1,white),(50,100))
+        window.blit(font1.render(str(timelimit),1,white),(325,100))
         
-        plus = py.draw.rect(window,(100,100,100),(400,100, 50,50),0,10)
-        window.blit(font1.render("+",1,(0,0,255)),(plus.x+10,plus.y-3))
+        plus = button(400,90, 40,50,"+")
+        minus = button(250,90, 40,50,"-")
+        back = button(100,370, 110,50,"Back")
         
-        minus = py.draw.rect(window,(100,100,100),(250,100, 50,50),0,10)
-        window.blit(font1.render("-",1,(0,0,255)),(minus.x+17,minus.y-7))
-        
-        window.blit(font2.render("Time Limit:",1,(0,0,255)),(50,100))
-        window.blit(font1.render(str(timelimit),1,(0,0,255)),(325,100))
-        end = py.draw.rect(window,(100,100,100),(100,370, 105,50),0,10)
-        window.blit(font1.render("Back",1,(0,0,255)),(end.x,end.y-5))
-        if pressed:
-            if end.collidepoint(mousepos):
-                gamestate = 0
-            elif plus.collidepoint(mousepos) and timelimit <99:
-                print("+")
-                timelimit+=1
-            elif minus.collidepoint(mousepos) and timelimit >1:
-                print("-")
-                timelimit-=1
+        if back:
+            gamestate = 0
+        elif plus and timelimit <99:
+            timelimit+=1
+        elif minus and timelimit >1:
+            timelimit-=1
+            
     py.display.flip()
     clock.tick(60)
 py.quit()
