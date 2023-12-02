@@ -1,4 +1,4 @@
-#Ref:https://stackoverflow.com/questions/42014195/rendering-text-with-multiple-lines-in-pygame?rq=1
+#https://www.pygame.org/docs/
 
 import pygame as py
 import random
@@ -97,7 +97,6 @@ while True:
     key = py.key.get_pressed()
     mousepos = py.mouse.get_pos()
     if ev.type == py.MOUSEBUTTONDOWN:
-        #mousepos = py.mouse.get_pos()
         pressed = True
     else:
         pressed = False
@@ -107,12 +106,9 @@ while True:
         window.blit(startBack,(0,0))
         window.blit(font3.render("SPIDER JUMPER",1,white), (25,25))
         
-#         start = py.draw.rect(window,gray,((windowwidth-110)/2,170, 110,50),0,10)
-#         window.blit(font1.render("Start",1,white),(start.x+5,start.y+5))
         start = button((windowwidth-110)/2,170, 110,50,"Start")
         settings = button((windowwidth-180)/2,240, 180,50,"Settings")
         howtoplay = button((windowwidth-255)/2,300, 255,50,"How To Play")
-        
         if start == True:
             reset()
             gamestate = 1
@@ -136,23 +132,19 @@ while True:
                 yspeed = 0
                 air = False
                 edge = False
-                #print("top")
                 rect.bottom = blocks[i].top           
                 if (key[py.K_SPACE]):
                     yspeed = -5.5
                     jump.play()
                 break
             elif rect.right > blocks[i].left and rect.right < blocks[i].right and rect.bottom > blocks[i].top+20:#and rect.right < blocks[i].left + 10
-                #print("edge")
                 yspeed = 0
                 air = False
                 edge = True
                 if key[py.K_w]:
                     yspeed = -4.5
-                    #py.mixer.music.play(0,0.5)
             elif rect.bottom< blocks[i].top:
                 air = True
-                #print("air")
                 edge = False
                 break
         
