@@ -1,5 +1,5 @@
 #https://www.pygame.org/docs/
-
+#https://archive.org/details/spider-man-across-the-spider-verse-soundtrack-from-and-inspired-by-the-motion-instrumental-edition/Spider-Man+Across+The+Spider-Verse/Instrumental+Edition/01-Annihilate+(Instrumental).mp3
 import pygame as py
 import random
 from pygame import mixer
@@ -20,13 +20,15 @@ click.set_volume(5.0)
 music = py.mixer.music.load("sound/01-Annihilate (Instrumental).mp3")
 py.mixer.music.play(-1)
 
-#daybg = py.image.load("day bg.png")
-#foreground = py.image.load("foreground.png")
+daybg = py.image.load("img/day bg.png")
+#foreground = py.image.load("img/foreground.png")
 nightsurface = py.image.load("img/nightbg 3.jpg")
+night = True
 milesm = py.image.load("img/milesrun.png")
 milesj = py.image.load("img/miles4.png")
 milesclimb = py.image.load("img/miles_morales.png")
 startBack = py.image.load("img/cover.jpg")
+endBack = py.image.load("img/cover2.png")
 
 font1 = py.font.SysFont("Bernard MT",60)
 font2 = py.font.SysFont("Bernard MT",25)
@@ -36,7 +38,7 @@ font3 = py.font.Font("spiderfont.ttf",80)
 
 gray = py.Color(15, 42, 60)
 white = py.Color(242, 242, 242)
-#fsurface = py.transform.scale_by(foreground,2)
+#fsurface = py.transform.scale_by(foreground,1)
 size = 1191
 buildings = [py.image.load("img/building1.png"),py.image.load("img/building2.png"),py.image.load("img/building3.png"),py.image.load("img/building4.png")]
 mybuild = [random.choice(buildings),random.choice(buildings)]
@@ -68,7 +70,9 @@ def button(x,y,w,h,text):
             click.play()
             return True
 def reset():
-    global nightx,nightx2,size,yspeed,rect,milesloc,milesnum,framecount,air,edge,blockpos,blockpos2,blocks,mytime,distance,time,timeover
+    global nightx,nightx2,size,yspeed,rect,milesloc,milesnum,framecount,air,edge,blockpos,blockpos2,blocks,mytime,distance,time,timeover#,frontx,frontx2
+    #frontx = 0
+    #frontx2 = size
     nightx = 0
     nightx2 = size
     yspeed = 2.0
@@ -102,8 +106,10 @@ while True:
         pressed = False
     window.fill("white")
     if gamestate == 0:#start
-        print("startscreen")
-        window.blit(startBack,(0,0))
+        if night:
+            window.blit(startBack,(0,0))
+        else:
+            window.blit(endBack,(0,0))
         window.blit(font3.render("SPIDER JUMPER",1,white), (25,25))
         
         start = button((windowwidth-110)/2,170, 110,50,"Start")
@@ -120,6 +126,8 @@ while True:
         if key[py.K_d] == True and edge == False:
             nightx -=1
             nightx2 -=1
+            #frontx-=3
+            #frontx2-=3
             for i in range(len(blocks)):
                 blocks[i].left -=10
             animate(milesloc,50,6,8)
@@ -141,7 +149,7 @@ while True:
                 yspeed = 0
                 air = False
                 edge = True
-                if key[py.K_w]:
+                if key[py.K_w] and key[py.K_SPACE] != True:
                     yspeed = -4.5
             elif rect.bottom< blocks[i].top:
                 air = True
@@ -159,7 +167,10 @@ while True:
             nightx = size
         if nightx2 < -size:
             nightx2 = size
-        
+#         if frontx < -size:
+#             frontx = size
+#         if frontx2 < -size:
+#             frontx2 = size
         if key[py.K_SPACE] == False and key[py.K_d] == False:
             milesloc.y = 0
             milesloc.x = 0
@@ -174,15 +185,19 @@ while True:
             mytime +=1
             print(mytime,int(distance))
         time+=1
-        #draw here 
-        window.blit(nightsurface,(nightx,0))
-        window.blit(nightsurface,(nightx2,0))
-        #window.blit(fsurface,(nightx*2-40,175))
-        #window.blit(fsurface,(nightx*2-40+612*2-40,175))
+        #draw here
+        if night:
+            window.blit(nightsurface,(nightx,0))
+            window.blit(nightsurface,(nightx2,0))
+        else:
+            window.blit(daybg,(nightx,0))
+            window.blit(daybg,(nightx2,0))
+#         window.blit(fsurface,(frontx,226))
+#         window.blit(fsurface,(frontx2,226))
         for i in range(len(blocks)):
             block = build(blocks[i],mybuild[i])
             window.blit(block,blocks[i])
-            py.draw.rect(window,gray,(blocks[i].left,blocks[i].top+20,10,blocks[i].height))
+            py.draw.rect(window,(15, 42, 60),(blocks[i].left,blocks[i].top+20,10,blocks[i].height))
             py.draw.rect(window,(0,0,0),(blocks[i].left,blocks[i].top,blocks[i].width,20))
         if air:
             window.blit(milesj,(rect.x,rect.y))
@@ -192,12 +207,15 @@ while True:
             window.blit(milesm,(rect.x,rect.y),milesloc)
         window.blit(font2.render("Time:",1,white),(10,10))
         window.blit(font2.render("Distance:",1,white),(10,30))
-        window.blit(font2.render(str(timelimit-mytime),1,white),(100,10))
+        window.blit(font2.render(str(timelimit-mytime)+ " s",1,white),(100,10))
         window.blit(font2.render(str(int(distance))+ " m",1,white),(100,30))
     elif gamestate == 2:#end screen
         print("endscreen")
-        window.blit(startBack,(0,0))
-        window.blit(font3.render("GAME OVER",1,white), (100,25))
+        if night:
+            window.blit(startBack,(0,0))
+        else:
+            window.blit(endBack,(0,0))
+        window.blit(font3.render("GAME OVER",1,white), (80,25))
         speed = distance/mytime
         if speed >= highscore:
             highscore = speed
@@ -223,7 +241,10 @@ while True:
             
     elif gamestate == 3:
         print("how to play")
-        window.fill("black")
+        if night:
+            window.fill("black")
+        else:
+            window.fill("white")
         f = open("HowToPlay.txt", "r")
         window.blit(font2.render(f.read(),1,white),(15,15))
         f.close()
@@ -234,7 +255,10 @@ while True:
 
     elif gamestate == 4:
         print("Settings")
-        window.fill("black")
+        if night:
+            window.fill("black")
+        else:
+            window.fill("white")
         window.blit(font1.render("Settings",1,white),(50,20))
         window.blit(font4.render("Time Limit:",1,white),(50,100))
         window.blit(font1.render(str(timelimit),1,white),(325,100))
@@ -243,13 +267,25 @@ while True:
         minus = button(250,90, 40,50,"-")
         back = button(100,370, 110,50,"Back")
         
+        window.blit(font4.render("Background:",1,white),(50,150))
+        #window.blit(font1.render(str(timelimit),1,white),(325,100))
+        
+        daybutton = button(380,150, 85,50,"Day")
+        nightbutton = button(250,150, 120,50,"Night")
         if back:
             gamestate = 0
         elif plus and timelimit <99:
             timelimit+=1
         elif minus and timelimit >1:
             timelimit-=1
-            
+        elif daybutton:
+            night = False
+            gray = py.Color(242, 242, 242)
+            white = py.Color(15, 42, 60)
+        elif nightbutton:
+            night = True
+            gray = py.Color(15, 42, 60)
+            white = py.Color(242, 242, 242)
     py.display.flip()
     clock.tick(60)
 py.quit()
